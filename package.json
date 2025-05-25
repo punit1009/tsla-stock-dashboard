@@ -10,8 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "prepare-deploy": "node deploy.cjs",
-    "start": "cd backend && node server.js",
-    "start:backend": "cd backend && node server.js",
+    "start": "cd backend && npm install && node server.js",
+    "start:backend": "cd backend && npm install && node server.js",
     "start:dev": "concurrently \"npm run dev\" \"npm run start:backend\"",
     "render-build": "npm install --legacy-peer-deps --force && npm run build && npm run prepare-deploy"
   },

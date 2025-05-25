@@ -16,9 +16,21 @@ app.use(cors({
 
 app.use(express.json());
 
+// Root route
+app.get('/', (req, res) => {
+    res.status(200).json({ 
+        status: 'ok', 
+        message: 'TSLA Stock Dashboard Backend',
+        timestamp: new Date().toISOString() 
+    });
+});
+
 // Health check endpoint for monitoring
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.status(200).json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString() 
+    });
 });
 
 // Gemini API configuration
