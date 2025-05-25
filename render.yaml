@@ -7,15 +7,20 @@ services:
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       
-      # Update npm and install Vite globally
+      # Update npm
       npm install -g npm@latest
+      
+      # Install Vite globally and locally
       npm install -g vite@latest
+      npm install vite@latest --save-dev
       
       # Install project dependencies
       npm install --force
       
-      # Run build and prepare for deployment
-      npm run build
+      # Run build with npx to ensure Vite is available
+      npx --yes vite@latest build --config vite.config.js
+      
+      # Prepare for deployment
       npm run prepare-deploy
     startCommand: cd deploy && npm start
     envVars:
