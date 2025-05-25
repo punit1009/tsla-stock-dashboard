@@ -124,7 +124,7 @@ const rootPackageJson = {
     "preinstall": "npm install -g npm@latest",
     "install": "npm install --production --no-optional",
     "start": "node backend/server.js",
-    "build": "npm run build"
+    "build": "echo 'Build completed'"
   },
   "engines": {
     "node": ">=16.0.0"
