@@ -3,12 +3,18 @@ services:
     name: tsla-dashboard
     env: node
     buildCommand: |
+      # Clean and update npm
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       npm install -g npm@latest
-      npm install -g vite@latest
+      
+      # Install project dependencies
       npm install --force
-      npm run build
+      
+      # Run custom build script
+      node build.js
+      
+      # Prepare for deployment
       npm run prepare-deploy
     startCommand: cd deploy && npm start
     envVars:
