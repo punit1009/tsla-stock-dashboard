@@ -3,18 +3,23 @@ services:
     name: tsla-dashboard
     env: node
     buildCommand: |
-      # Clean and update npm
+      # Clean environment
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
+      
+      # Update npm and install Vite globally
       npm install -g npm@latest
+      npm install -g vite@latest
       
       # Install project dependencies
       npm install --force
       
-      # Run custom build script
+      # Run custom build script with more detailed logging
+      echo "Starting custom build script..."
       node build.js
       
       # Prepare for deployment
+      echo "Preparing for deployment..."
       npm run prepare-deploy
     startCommand: cd deploy && npm start
     envVars:
