@@ -7,13 +7,8 @@ services:
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       
-      # Install root dependencies
+      # Install all dependencies
       npm install --legacy-peer-deps --force
-      
-      # Install backend dependencies
-      cd backend
-      npm install --production
-      cd ..
       
       # Build the frontend
       npm run build
@@ -43,7 +38,6 @@ services:
     buildCache:
       paths:
         - node_modules
-        - backend/node_modules
     
     # Configure build timeout (in seconds)
     buildTimeout: 600

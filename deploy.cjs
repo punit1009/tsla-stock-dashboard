@@ -122,19 +122,21 @@ const rootPackageJson = {
   "type": "commonjs",
   "scripts": {
     "preinstall": "npm install -g npm@latest",
-    "install": "cd backend && npm install --production && cd ..",
+    "install": "npm install --production --no-optional",
     "start": "node backend/server.js",
-    "build": "npm install && npm run build"
+    "build": "npm run build"
   },
   "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
-    // Backend dependencies will be installed from backend/package.json
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "axios": "^1.9.0"
   },
   "cacheDirectories": [
-    "node_modules",
-    "backend/node_modules"
+    "node_modules"
   ]
 };
 

@@ -12,9 +12,9 @@
     "prepare-deploy": "node deploy.cjs",
     "start": "node backend/server.js",
     "start:backend": "node backend/server.js",
-    "start:dev": "concurrently \"npm run dev\" \"npm run start:backend\"",
+    "start:dev": "concurrently \"npm run dev\" \"nodemon backend/server.js\"",
     "render-build": "npm install --legacy-peer-deps --force && npm run build && npm run prepare-deploy",
-    "postinstall": "cd backend && npm install --production"
+    "postinstall": "npm install --production"
   },
   "dependencies": {
     "@vitejs/plugin-react": "4.5.0",
