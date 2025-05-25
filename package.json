@@ -1,12 +1,11 @@
 {
   "name": "tsla-stock-dashboard",
   "private": true,
-  "type": "module",
   "version": "0.1.0",
   "scripts": {
-    "preinstall": "npm install -g vite@latest",
+    "preinstall": "npm install vite@latest --save-exact",
     "dev": "vite",
-    "build": "node --experimental-modules --experimental-json-modules node_modules/vite/bin/vite.js build --config vite.config.js",
+    "build": "node ./node_modules/vite/bin/vite.js build --config vite.config.js",
     "lint": "eslint .",
     "preview": "npx vite preview",
     "prepare-deploy": "node deploy.cjs",

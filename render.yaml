@@ -7,18 +7,9 @@ services:
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       
-      # Update npm
-      npm install -g npm@latest
-      
-      # Install Vite globally and locally
-      npm install -g vite@latest
-      npm install vite@latest --save-dev
-      
-      # Install project dependencies
+      # Install dependencies and build
       npm install --force
-      
-      # Run build with Node.js flags for ES modules
-      node --experimental-modules --experimental-json-modules node_modules/vite/bin/vite.js build --config vite.config.js
+      npm run build
       
       # Prepare for deployment
       npm run prepare-deploy
