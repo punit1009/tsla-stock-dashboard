@@ -2,10 +2,9 @@
   "name": "tsla-stock-dashboard",
   "private": true,
   "version": "0.1.0",
-  "type": "module",
   "scripts": {
     "dev": "npx vite",
-    "build": "npx vite build",
+    "build": "npx vite build --config vite.config.js",
     "lint": "eslint .",
     "preview": "npx vite preview",
     "prepare-deploy": "node deploy.cjs",
