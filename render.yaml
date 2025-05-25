@@ -8,7 +8,8 @@ services:
       npm cache clean --force
       
       # Install all dependencies including devDependencies
-      npm install --legacy-peer-deps --force --include=dev
+      npm install --legacy-peer-deps --force
+      npm install --save-dev postcss-import@15.0.0 postcss-nested@6.0.1 postcss-preset-env@9.1.0
       
       # Install Vite globally
       npm install -g vite@5.4.19
