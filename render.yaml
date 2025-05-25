@@ -14,12 +14,8 @@ services:
       # Install project dependencies
       npm install --force
       
-      # Run custom build script with more detailed logging
-      echo "Starting custom build script..."
-      node build.js
-      
-      # Prepare for deployment
-      echo "Preparing for deployment..."
+      # Run build and prepare for deployment
+      npm run build
       npm run prepare-deploy
     startCommand: cd deploy && npm start
     envVars:
