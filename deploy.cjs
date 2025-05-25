@@ -41,21 +41,41 @@ if (!runCommand('npm run build')) {
 }
 
 // Copy backend files to deploy directory
-console.log('\n📦 Preparing backend files...');
-if (!fs.existsSync(path.join(config.deployDir, 'backend'))) {
-  fs.mkdirSync(path.join(config.deployDir, 'backend'), { recursive: true });
+console.log('Copying backend files...');
+const backendDir = path.join(config.deployDir, 'backend');
+fs.mkdirSync(backendDir, { recursive: true });
+
+// Copy backend files individually to handle .env properly
+const backendFiles = fs.readdirSync(config.backendDir);
+backendFiles.forEach(file => {
+  // Skip node_modules and other non-essential files
+  if (file === 'node_modules' || file.startsWith('.')) return;
+  
+  const srcPath = path.join(config.backendDir, file);
+  const destPath = path.join(backendDir, file);
+  
+  if (fs.statSync(srcPath).isDirectory()) {
+    copyDir(srcPath, destPath);
+  } else {
+    fs.copyFileSync(srcPath, destPath);
+  }
+});
+
+// Copy node_modules to deploy directory
+console.log('Copying node_modules...');
+const sourceNodeModules = path.join(__dirname, 'node_modules');
+const destNodeModules = path.join(config.deployDir, 'node_modules');
+
+if (fs.existsSync(sourceNodeModules)) {
+    // Remove existing node_modules in deploy if any
+    if (fs.existsSync(destNodeModules)) {
+        fs.rmSync(destNodeModules, { recursive: true, force: true });
+    }
+    
+    // Copy node_modules to deploy directory
+    fs.mkdirSync(path.dirname(destNodeModules), { recursive: true });
+    copyDir(sourceNodeModules, destNodeModules);
 }
-
-// Copy server.js and package.json
-fs.copyFileSync(
-  path.join(config.backendDir, 'server.js'),
-  path.join(config.deployDir, 'backend', 'server.js')
-);
-
-fs.copyFileSync(
-  path.join(config.backendDir, 'package.json'),
-  path.join(config.deployDir, 'backend', 'package.json')
-);
 
 // Copy .env.production to .env in the deploy directory
 fs.copyFileSync(
@@ -97,22 +117,6 @@ const backendDeployDir = path.join(config.deployDir, 'backend');
 if (!fs.existsSync(backendDeployDir)) {
   fs.mkdirSync(backendDeployDir, { recursive: true });
 }
-
-// Copy backend files individually to handle .env properly
-const backendFiles = fs.readdirSync(config.backendDir);
-backendFiles.forEach(file => {
-  // Skip node_modules and other non-essential files
-  if (file === 'node_modules' || file.startsWith('.')) return;
-  
-  const srcPath = path.join(config.backendDir, file);
-  const destPath = path.join(backendDeployDir, file);
-  
-  if (fs.statSync(srcPath).isDirectory()) {
-    copyDir(srcPath, destPath);
-  } else {
-    fs.copyFileSync(srcPath, destPath);
-  }
-});
 
 // Create a root package.json for the deploy directory
 const rootPackageJson = {

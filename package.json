@@ -9,13 +9,13 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare-deploy": "node deploy.cjs",
+    "prepare-deploy": "npm install && node deploy.cjs",
     "start": "node backend/server.js",
     "start:backend": "node backend/server.js",
     "start:dev": "concurrently \"npm run dev\" \"nodemon backend/server.js\"",
     "render-build": "npm ci --legacy-peer-deps && npm run vite-build && npm run prepare-deploy",
     "vite-build": "vite build",
-    "postinstall": "echo 'Skipping postinstall to prevent loops'"
+    "postinstall": "echo 'Postinstall complete'"
   },
   "dependencies": {
     "@vitejs/plugin-react": "4.5.0",
