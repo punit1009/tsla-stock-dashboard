@@ -7,8 +7,8 @@ services:
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       
-      # Install all dependencies
-      npm install --legacy-peer-deps --force
+      # Install exact versions from package-lock.json
+      npm ci --legacy-peer-deps
       
       # Build the frontend using the specific vite-build script
       npm run vite-build

@@ -121,8 +121,8 @@ const rootPackageJson = {
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "preinstall": "npm install -g npm@latest",
-    "install": "npm install --production --no-optional",
+    "preinstall": "echo 'Skipping preinstall in deploy'",
+    "install": "echo 'Skipping install in deploy'",
     "start": "node backend/server.js",
     "build": "echo 'Build completed'"
   },
