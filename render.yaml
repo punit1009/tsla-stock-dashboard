@@ -17,8 +17,8 @@ services:
       # Install project dependencies
       npm install --force
       
-      # Run build with npx to ensure Vite is available
-      npx --yes vite@latest build --config vite.config.js
+      # Run build with Node.js flags for ES modules
+      node --experimental-modules --experimental-json-modules node_modules/vite/bin/vite.js build --config vite.config.js
       
       # Prepare for deployment
       npm run prepare-deploy

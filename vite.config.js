@@ -1,9 +1,9 @@
-const { defineConfig } = require('vite');
-const react = require('@vitejs/plugin-react');
-const { resolve } = require('path');
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
 
 // https://vitejs.dev/config/
-module.exports = defineConfig(({ command, mode }) => {
+export default defineConfig(({ command, mode }) => {
   const isProduction = mode === 'production';
   
   return {
