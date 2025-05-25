@@ -3,7 +3,9 @@ services:
     name: tsla-dashboard
     env: node
     buildCommand: |
-      npm ci
+      npm install -g npm@latest
+      npm install -g vite @vitejs/plugin-react
+      npm install
       npm run build
       npm run prepare-deploy
     startCommand: cd deploy && npm start
