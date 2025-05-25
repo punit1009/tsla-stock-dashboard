@@ -61,20 +61,40 @@ backendFiles.forEach(file => {
   }
 });
 
-// Copy node_modules to deploy directory
-console.log('Copying node_modules...');
-const sourceNodeModules = path.join(__dirname, 'node_modules');
-const destNodeModules = path.join(config.deployDir, 'node_modules');
+// Install production dependencies directly in deploy directory
+console.log('Installing production dependencies in deploy directory...');
+const { execSync } = require('child_process');
 
-if (fs.existsSync(sourceNodeModules)) {
-    // Remove existing node_modules in deploy if any
-    if (fs.existsSync(destNodeModules)) {
-        fs.rmSync(destNodeModules, { recursive: true, force: true });
-    }
-    
-    // Copy node_modules to deploy directory
-    fs.mkdirSync(path.dirname(destNodeModules), { recursive: true });
-    copyDir(sourceNodeModules, destNodeModules);
+// Create a minimal package.json in deploy directory
+const deployPackageJson = {
+  "name": "tsla-stock-dashboard-deploy",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "axios": "^1.9.0"
+  }
+};
+
+// Write the package.json to deploy directory
+fs.writeFileSync(
+  path.join(config.deployDir, 'package.json'),
+  JSON.stringify(deployPackageJson, null, 2)
+);
+
+// Install production dependencies
+console.log('Running npm install in deploy directory...');
+try {
+  execSync('npm install --production', { 
+    cwd: config.deployDir,
+    stdio: 'inherit' 
+  });
+  console.log('Dependencies installed successfully in deploy directory');
+} catch (error) {
+  console.error('Failed to install dependencies in deploy directory:', error);
+  process.exit(1);
 }
 
 // Copy .env.production to .env in the deploy directory

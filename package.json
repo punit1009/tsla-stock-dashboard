@@ -14,7 +14,8 @@
     "start:backend": "node backend/server.js",
     "start:dev": "concurrently \"npm run dev\" \"nodemon backend/server.js\"",
     "render-build": "npm ci --legacy-peer-deps && npm run vite-build && npm run prepare-deploy",
-    "vite-build": "vite build"
+    "vite-build": "vite build",
+    "postinstall": "echo 'Skipping postinstall'"
   },
   "dependencies": {
     "@vitejs/plugin-react": "4.5.0",

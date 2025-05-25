@@ -24,14 +24,14 @@ services:
       echo 'Running deployment script...'
       npm run prepare-deploy
       
-      # Install production dependencies in deploy directory
-      echo 'Installing production dependencies...'
-      cd deploy
-      npm install --production
-      
-      # Verify node_modules exists
-      if [ ! -d "node_modules" ]; then
-        echo 'Error: node_modules not found after installation!'
+      # Verify deployment
+      echo 'Verifying deployment...'
+      if [ ! -d "deploy/node_modules/express" ]; then
+        echo 'ERROR: Express module not found in deploy directory!'
+        echo 'Directory structure:'
+        ls -la deploy
+        echo '\nnode_modules contents:'
+        ls -la deploy/node_modules || echo 'No node_modules found'
         exit 1
       fi
     
