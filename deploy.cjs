@@ -92,17 +92,43 @@ function copyDir(src, dest) {
 // Copy the dist directory
 copyDir(config.distDir, path.join(config.deployDir, 'dist'));
 
+// Ensure the backend directory exists in deploy
+const backendDeployDir = path.join(config.deployDir, 'backend');
+if (!fs.existsSync(backendDeployDir)) {
+  fs.mkdirSync(backendDeployDir, { recursive: true });
+}
+
+// Copy backend files individually to handle .env properly
+const backendFiles = fs.readdirSync(config.backendDir);
+backendFiles.forEach(file => {
+  // Skip node_modules and other non-essential files
+  if (file === 'node_modules' || file.startsWith('.')) return;
+  
+  const srcPath = path.join(config.backendDir, file);
+  const destPath = path.join(backendDeployDir, file);
+  
+  if (fs.statSync(srcPath).isDirectory()) {
+    copyDir(srcPath, destPath);
+  } else {
+    fs.copyFileSync(srcPath, destPath);
+  }
+});
+
 // Create a root package.json for the deploy directory
 const rootPackageJson = {
   name: 'tsla-stock-dashboard',
   version: '1.0.0',
   private: true,
-  type: 'commonjs', // Use CommonJS for compatibility
+  type: 'commonjs',
   scripts: {
-    start: 'cd backend && npm install && node server.js'
+    start: 'cd backend && npm install --production && node server.js',
+    install: 'cd backend && npm install --production'
   },
   engines: {
     node: '>=16.0.0'
+  },
+  dependencies: {
+    // Add any production dependencies needed at the root level
   }
 };
 

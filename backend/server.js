@@ -132,14 +132,38 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(distPath));
     
     // For any other request, send index.html (for SPA routing)
-    app.get('*', (req, res) => {
+    // Make sure to handle all other routes by sending index.html
+    app.get('*', (req, res, next) => {
         // Skip API routes
         if (req.path.startsWith('/api/')) {
-            return res.status(404).json({ error: 'API endpoint not found' });
+            return next(); // Let the 404 handler catch this
         }
-        res.sendFile(path.join(distPath, 'index.html'));
+        
+        // Send the main index.html for all other routes
+        res.sendFile(path.join(distPath, 'index.html'), (err) => {
+            if (err) {
+                console.error('Error sending index.html:', err);
+                res.status(500).send('Error loading the application');
+            }
+        });
     });
 }
+
+// 404 handler for API routes
+app.use('/api/*', (req, res) => {
+    res.status(404).json({ error: 'API endpoint not found' });
+});
+
+// General 404 handler
+app.use((req, res) => {
+    res.status(404).send('Not Found');
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
