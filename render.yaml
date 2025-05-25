@@ -2,12 +2,7 @@ services:
   - type: web
     name: tsla-dashboard
     env: node
-    buildCommand: |
-      npm install
-      npm install -g npm@latest
-      npm install --save-dev vite @vitejs/plugin-react
-      npm run build
-      npm run prepare-deploy
+    buildCommand: npm run render-build
     startCommand: cd deploy && npm start
     envVars:
       - key: NODE_ENV
