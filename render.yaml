@@ -3,10 +3,11 @@ services:
     name: tsla-dashboard
     env: node
     buildCommand: |
-      rm -rf node_modules package-lock.json
+      rm -rf node_modules package-lock.json .npmrc
       npm install -g npm@latest
-      npm install
-      npm run build
+      npm install vite --save-exact
+      npm install --force
+      export PATH="./node_modules/.bin:$PATH" && npm run build
       npm run prepare-deploy
     startCommand: cd deploy && npm start
     envVars:
