@@ -6,6 +6,7 @@ services:
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       npm install -g npm@latest
+      npm install -g vite@latest
       npm install --force
       npm run build
       npm run prepare-deploy
