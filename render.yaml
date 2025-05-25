@@ -7,8 +7,13 @@ services:
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       
-      # Install dependencies and build
+      # Install dependencies
       npm install --legacy-peer-deps --force
+      
+      # Install Vite globally
+      npm install -g vite@5.4.19
+      
+      # Build the project
       npm run build
       
       # Prepare for deployment

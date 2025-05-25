@@ -6,7 +6,7 @@
   "scripts": {
     "preinstall": "npm install vite@5.4.19 --save-exact",
     "dev": "vite",
-    "build": "cross-env NODE_OPTIONS='--loader tsx' vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "prepare-deploy": "node deploy.cjs",
