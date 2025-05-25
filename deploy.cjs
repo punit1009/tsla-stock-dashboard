@@ -121,15 +121,20 @@ const rootPackageJson = {
   private: true,
   type: 'commonjs',
   scripts: {
-    start: 'cd backend && npm install --production && node server.js',
+    start: 'node backend/server.js',
+    build: 'npm install && npm run build',
     install: 'cd backend && npm install --production'
   },
   engines: {
     node: '>=16.0.0'
   },
   dependencies: {
-    // Add any production dependencies needed at the root level
-  }
+    // Production dependencies will be installed from the backend/package.json
+  },
+  cacheDirectories: [
+    'node_modules',
+    'backend/node_modules'
+  ]
 };
 
 fs.writeFileSync(
