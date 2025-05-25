@@ -8,7 +8,7 @@ services:
       npm cache clean --force
       
       # Install dependencies and build
-      npm install --force
+      npm install --legacy-peer-deps --force
       npm run build
       
       # Prepare for deployment
