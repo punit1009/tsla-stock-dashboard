@@ -1,0 +1,30 @@
+# Netlify configuration file
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "functions"
+
+# Redirect all routes to index.html for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Proxy API requests to the backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://tsla-dashboard-backend.onrender.com/api/:splat"
+  status = 200
+  force = true
+  headers = {Access-Control-Allow-Origin = "*"}
+
+# Environment variable configuration
+[context.production.environment]
+  VITE_GEMINI_API_URL = "/api"
+
+[context.deploy-preview.environment]
+  VITE_GEMINI_API_URL = "/api"
+
+[context.branch-deploy.environment]
+  VITE_GEMINI_API_URL = "/api"
