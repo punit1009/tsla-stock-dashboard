@@ -4,7 +4,7 @@ services:
     env: node
     buildCommand: |
       npm install -g npm@latest
-      npm install -g vite @vitejs/plugin-react
+      npm ci --omit=dev
       npm install
       npm run build
       npm run prepare-deploy
