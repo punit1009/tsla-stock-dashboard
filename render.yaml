@@ -7,25 +7,8 @@ services:
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       
-      # Install all dependencies including devDependencies
+      # Install all dependencies
       npm install --legacy-peer-deps --force
-      npm install --save-dev postcss-import@15.0.0 postcss-nested@6.0.1 postcss-preset-env@9.1.0
-      
-      # Install Vite globally
-      npm install -g vite@5.4.19
-      
-      # Verify PostCSS configuration
-      if [ -f postcss.config.js ]; then
-        echo "PostCSS config found at $(pwd)/postcss.config.js"
-      else
-        echo "No PostCSS config found, creating one..."
-        echo 'export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-};' > postcss.config.js
-      fi
       
       # Build the project
       npm run build
