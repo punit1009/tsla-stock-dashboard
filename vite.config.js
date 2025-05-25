@@ -49,6 +49,9 @@ export default defineConfig({
       target: 'es2020',
     },
   },
+  css: {
+    postcss: './postcss.config.cjs'
+  },
   esbuild: {
     logOverride: { 'this-is-undefined-in-esm': 'silent' }
   }
