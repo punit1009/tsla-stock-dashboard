@@ -63,7 +63,6 @@ backendFiles.forEach(file => {
 
 // Install production dependencies directly in deploy directory
 console.log('Installing production dependencies in deploy directory...');
-const { execSync } = require('child_process');
 
 // Create a minimal package.json in deploy directory
 const deployPackageJson = {
