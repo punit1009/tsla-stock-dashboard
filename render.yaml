@@ -2,7 +2,10 @@ services:
   - type: web
     name: tsla-dashboard
     env: node
-    buildCommand: npm run render-build
+    buildCommand: |
+      npm ci
+      npm run build
+      npm run prepare-deploy
     startCommand: cd deploy && npm start
     envVars:
       - key: NODE_ENV

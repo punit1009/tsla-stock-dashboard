@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "npx vite",
-    "build": "npm install && vite build --config vite.config.js",
+    "build": "npm install && npx vite build --config vite.config.js",
     "lint": "eslint .",
     "preview": "npx vite preview",
     "prepare-deploy": "node deploy.cjs",
