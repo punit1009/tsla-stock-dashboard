@@ -116,24 +116,25 @@ backendFiles.forEach(file => {
 
 // Create a root package.json for the deploy directory
 const rootPackageJson = {
-  name: 'tsla-stock-dashboard',
-  version: '1.0.0',
-  private: true,
-  type: 'commonjs',
-  scripts: {
-    start: 'node backend/server.js',
-    build: 'npm install && npm run build',
-    install: 'cd backend && npm install --production'
+  "name": "tsla-stock-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "preinstall": "npm install -g npm@latest",
+    "install": "cd backend && npm install --production && cd ..",
+    "start": "node backend/server.js",
+    "build": "npm install && npm run build"
   },
-  engines: {
-    node: '>=16.0.0'
+  "engines": {
+    "node": ">=16.0.0"
   },
-  dependencies: {
-    // Production dependencies will be installed from the backend/package.json
+  "dependencies": {
+    // Backend dependencies will be installed from backend/package.json
   },
-  cacheDirectories: [
-    'node_modules',
-    'backend/node_modules'
+  "cacheDirectories": [
+    "node_modules",
+    "backend/node_modules"
   ]
 };
 

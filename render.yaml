@@ -7,24 +7,43 @@ services:
       rm -rf node_modules package-lock.json .npmrc
       npm cache clean --force
       
-      # Install all dependencies
+      # Install root dependencies
       npm install --legacy-peer-deps --force
       
-      # Build the project
+      # Install backend dependencies
+      cd backend
+      npm install --production
+      cd ..
+      
+      # Build the frontend
       npm run build
       
       # Prepare for deployment
       npm run prepare-deploy
-    startCommand: cd deploy && npm start
+    
+    startCommand: npm start
+    
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000
       - key: GEMINI_API_KEY
         fromDatabase:
           name: gemini-api-key
           property: value
-      - key: PORT
-        value: 10000
+      - key: FRONTEND_URL
+        value: https://tsla-stock-dashboard.onrender.com
+    
     plan: free
     autoDeploy: true
     healthCheckPath: /health
+    
+    # Configure build cache
+    buildCache:
+      paths:
+        - node_modules
+        - backend/node_modules
+    
+    # Configure build timeout (in seconds)
+    buildTimeout: 600
