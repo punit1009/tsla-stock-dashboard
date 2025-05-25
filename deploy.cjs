@@ -125,10 +125,8 @@ const rootPackageJson = {
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "preinstall": "echo 'Skipping preinstall in deploy'",
-    "install": "echo 'Skipping install in deploy'",
     "start": "node backend/server.js",
-    "build": "echo 'Build completed'"
+    "install": "cd backend && npm install --production && cd .."
   },
   "engines": {
     "node": ">=16.0.0"
@@ -138,15 +136,33 @@ const rootPackageJson = {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "axios": "^1.9.0"
-  },
-  "cacheDirectories": [
-    "node_modules"
-  ]
+  }
 };
 
+// Create a backend package.json
+const backendPackageJson = {
+  "name": "tsla-stock-dashboard-backend",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "axios": "^1.9.0"
+  }
+};
+
+// Write root package.json
 fs.writeFileSync(
   path.join(config.deployDir, 'package.json'),
   JSON.stringify(rootPackageJson, null, 2)
+);
+
+// Write backend package.json
+fs.writeFileSync(
+  path.join(config.deployDir, 'backend', 'package.json'),
+  JSON.stringify(backendPackageJson, null, 2)
 );
 
 // Create a README.md with deployment instructions

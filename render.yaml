@@ -4,24 +4,35 @@ services:
     env: node
     buildCommand: |
       # Clean environment
-      rm -rf node_modules package-lock.json .npmrc
+      echo 'Cleaning environment...'
+      rm -rf node_modules package-lock.json .npmrc deploy
       npm cache clean --force
       
       # Install all dependencies
+      echo 'Installing dependencies...'
       npm install --legacy-peer-deps
       
       # Build the frontend
+      echo 'Building frontend...'
       npm run vite-build
       
+      # Create deploy directory
+      echo 'Preparing deployment...'
+      mkdir -p deploy
+      
+      # Run the deployment script
+      echo 'Running deployment script...'
+      npm run prepare-deploy
+      
       # Install production dependencies in deploy directory
+      echo 'Installing production dependencies...'
       cd deploy
       npm install --production
-      cd ..
       
-      # Ensure node_modules is in the right place
-      if [ ! -d "deploy/node_modules" ]; then
-        echo "Moving node_modules to deploy directory..."
-        mv node_modules deploy/
+      # Verify node_modules exists
+      if [ ! -d "node_modules" ]; then
+        echo 'Error: node_modules not found after installation!'
+        exit 1
       fi
     
     startCommand: npm start
