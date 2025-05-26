@@ -1,9 +1,17 @@
-# Netlify configuration file
+# Netlify configuration for TSLA Stock Dashboard
 
 [build]
+  # Build command (runs when you deploy)
   command = "npm run build"
+  # The directory containing your built files (Vite's output)
   publish = "dist"
-  functions = "functions"
+  # We're not using Netlify Functions, so this can be removed
+  # functions = "functions"
+
+# Environment variables
+[build.environment]
+  NODE_VERSION = "18"  # Match your local Node.js version
+  VITE_API_BASE_URL = ""  # Will be overridden by Netlify UI settings
 
 # Redirect all routes to index.html for SPA routing
 [[redirects]]
@@ -11,13 +19,25 @@
   to = "/index.html"
   status = 200
 
-# Proxy API requests to the backend
+# Proxy API requests to the Render backend
 [[redirects]]
   from = "/api/*"
-  to = "https://tsla-dashboard-backend.onrender.com/api/:splat"
+  to = "https://your-render-app.onrender.com/api/:splat"  # Replace with your Render backend URL
   status = 200
   force = true
-  headers = {Access-Control-Allow-Origin = "*"}
+
+# CORS headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "same-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https: data:; connect-src 'self' https://your-render-app.onrender.com;"
 
 # Environment variable configuration
 [context.production.environment]

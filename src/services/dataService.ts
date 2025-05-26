@@ -68,46 +68,36 @@ function mapRowToStockData(row: any): StockData | null {
   };
 }
 
+// API base URL from environment variables
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 export const fetchStockData = async (startDate?: string, endDate?: string): Promise<StockData[]> => {
   try {
-    const response = await fetch('/TSLA_data.xlsx');
-    const arrayBuffer = await response.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    // Build query parameters for date range
+    const params = new URLSearchParams();
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
     
-    let stockData: StockData[] = (jsonData as any[]).map(mapRowToStockData).filter((d): d is StockData => d !== null);
-
-    // Remove duplicate dates, keeping the last occurrence and sort by date
-    const seen = new Map<string, StockData>();
-    for (const item of stockData) {
-      seen.set(item.date, item); // keeps last occurrence
+    const url = `${API_BASE_URL}/api/stock-data${params.toString() ? `?${params.toString()}` : ''}`;
+    console.log('Fetching stock data from:', url);
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    stockData = Array.from(seen.values());
-
-    // Sort data by date in ascending order
-    stockData.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return dateA.getTime() - dateB.getTime();
-    });
-
-    // Filter by date range if specified
-    if (startDate || endDate) {
-      const start = startDate ? new Date(startDate) : new Date('2022-08-25');
-      const end = endDate ? new Date(endDate) : new Date('2025-05-25');
-      
-      stockData = stockData.filter(item => {
-        const itemDate = new Date(item.date);
-        return itemDate >= start && itemDate <= end;
-      });
+    
+    const data = await response.json();
+    
+    if (!Array.isArray(data)) {
+      console.error('Invalid data format received from API:', data);
+      return [];
     }
-
-    console.log(`Stock data after cleaning and sorting: ${stockData.length} rows`);
-    return stockData;
+    
+    console.log(`Received ${data.length} stock data records from API`);
+    return data;
   } catch (err: any) {
-    console.error('Error fetching stock data:', err);
+    console.error('Error fetching stock data from API:', err);
     return [];
   }
 };

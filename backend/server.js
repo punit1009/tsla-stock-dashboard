@@ -32,6 +32,35 @@ app.get('/', (req, res) => {
     });
 });
 
+// Stock data endpoint
+app.get('/api/stock-data', (req, res) => {
+    try {
+        const { startDate, endDate } = req.query;
+        const data = require('../data/tsla-stock-data.json');
+        
+        // Filter data by date range if provided
+        let filteredData = [...data];
+        
+        if (startDate || endDate) {
+            const start = startDate ? new Date(startDate) : new Date('2022-08-25');
+            const end = endDate ? new Date(endDate) : new Date();
+            
+            filteredData = filteredData.filter(item => {
+                const itemDate = new Date(item.date);
+                return itemDate >= start && itemDate <= end;
+            });
+        }
+        
+        // Sort by date
+        filteredData.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        res.json(filteredData);
+    } catch (error) {
+        console.error('Error fetching stock data:', error);
+        res.status(500).json({ error: 'Failed to fetch stock data' });
+    }
+});
+
 // Serve static files from the dist directory in production
 if (process.env.NODE_ENV === 'production') {
     const distPath = path.join(__dirname, '../dist');
