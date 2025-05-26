@@ -78,26 +78,69 @@ export const fetchStockData = async (startDate?: string, endDate?: string): Prom
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
     
-    const url = `${API_BASE_URL}/api/stock-data${params.toString() ? `?${params.toString()}` : ''}`;
-    console.log('Fetching stock data from:', url);
+    const apiUrl = `${API_BASE_URL}/api/stock-data${params.toString() ? `?${params.toString()}` : ''}`;
+    console.log('Fetching stock data from:', apiUrl);
     
-    const response = await fetch(url);
+    const response = await fetch(apiUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
     
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    // Log response status and headers for debugging
+    console.log('Response status:', response.status, response.statusText);
+    
+    // Get response text first to handle both JSON and non-JSON responses
+    const responseText = await response.text();
+    
+    // Try to parse as JSON
+    let data;
+    try {
+      data = responseText ? JSON.parse(responseText) : null;
+    } catch (e) {
+      console.error('Failed to parse JSON response. Response text:', responseText.substring(0, 200));
+      throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}...`);
     }
     
-    const data = await response.json();
+    if (!response.ok) {
+      console.error('API Error Response:', data || responseText);
+      throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+    }
     
     if (!Array.isArray(data)) {
-      console.error('Invalid data format received from API:', data);
+      console.error('Invalid data format received from API. Expected array, got:', typeof data, data);
       return [];
     }
     
-    console.log(`Received ${data.length} stock data records from API`);
+    console.log(`Successfully received ${data.length} stock data records from API`);
     return data;
   } catch (err: any) {
-    console.error('Error fetching stock data from API:', err);
+    console.error('Error in fetchStockData:', err);
+    // Return sample data if in development
+    if (import.meta.env.DEV) {
+      console.warn('Using sample data due to API error');
+      return getSampleData();
+    }
     return [];
   }
 };
+
+// Sample data fallback for development
+function getSampleData(): StockData[] {
+  return [
+    {
+      date: '2025-05-01',
+      open: 180.5,
+      high: 185.3,
+      low: 179.2,
+      close: 184.7,
+      volume: 25000000,
+      direction: 'LONG',
+      support: '[175, 170, 165]',
+      resistance: '[190, 195, 200]',
+      // Removed additional properties that aren't in the StockData interface
+    },
+    // Add more sample data points as needed
+  ];
+}

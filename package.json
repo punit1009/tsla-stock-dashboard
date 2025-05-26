@@ -15,7 +15,8 @@
     "start:dev": "concurrently \"npm run dev\" \"nodemon backend/server.js\"",
     "render-build": "npm ci --legacy-peer-deps && npm run vite-build && npm run prepare-deploy",
     "vite-build": "vite build",
-    "postinstall": "echo 'Skipping postinstall'"
+    "convert-data": "node backend/convert-excel-to-json.js",
+    "postinstall": "npm run convert-data"
   },
   "dependencies": {
     "@vitejs/plugin-react": "4.5.0",

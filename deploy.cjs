@@ -45,6 +45,13 @@ console.log('Copying backend files...');
 const backendDir = path.join(config.deployDir, 'backend');
 fs.mkdirSync(backendDir, { recursive: true });
 
+// Ensure data directory exists in the deployment
+const deployDataDir = path.join(backendDir, 'data');
+if (!fs.existsSync(deployDataDir)) {
+  fs.mkdirSync(deployDataDir, { recursive: true });
+  console.log(`Created data directory: ${deployDataDir}`);
+}
+
 // Copy backend files individually to handle .env properly
 const backendFiles = fs.readdirSync(config.backendDir);
 backendFiles.forEach(file => {
@@ -61,26 +68,69 @@ backendFiles.forEach(file => {
   }
 });
 
+// Copy the Excel data file if it exists in the project root
+const excelFileName = 'TSLA_data.xlsx';
+const excelSrcPath = path.join(config.frontendDir, excelFileName);
+const excelDestPath = path.join(backendDir, excelFileName);
+
+if (fs.existsSync(excelSrcPath)) {
+  console.log(`Copying ${excelFileName} to deployment...`);
+  fs.copyFileSync(excelSrcPath, excelDestPath);
+  console.log(`Successfully copied ${excelFileName} to ${excelDestPath}`);
+} else {
+  console.warn(`Warning: ${excelFileName} not found in project root.`);
+  console.log('Looking for Excel file in parent directories...');
+  
+  // Try to find the Excel file in parent directories
+  const findFileInParents = (filename, startDir = config.frontendDir) => {
+    const fullPath = path.join(startDir, filename);
+    if (fs.existsSync(fullPath)) return fullPath;
+    
+    const parentDir = path.dirname(startDir);
+    if (parentDir === startDir) return null;
+    
+    return findFileInParents(filename, parentDir);
+  };
+  
+  const foundExcelPath = findFileInParents(excelFileName);
+  if (foundExcelPath) {
+    console.log(`Found ${excelFileName} at: ${foundExcelPath}`);
+    fs.copyFileSync(foundExcelPath, excelDestPath);
+    console.log(`Successfully copied ${excelFileName} to ${excelDestPath}`);
+  } else {
+    console.error(`Error: Could not find ${excelFileName} in the project or parent directories.`);
+  }
+}
+
 // Install production dependencies directly in deploy directory
 console.log('Installing production dependencies in deploy directory...');
 
 // Create a minimal package.json in deploy directory
-const deployPackageJson = {
-  "name": "tsla-stock-dashboard-deploy",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "axios": "^1.9.0"
-  }
+const packageJson = JSON.parse(fs.readFileSync(path.join(config.frontendDir, 'package.json'), 'utf8'));
+
+// Create a minimal package.json for production
+const prodPackageJson = {
+  name: packageJson.name,
+  version: packageJson.version,
+  private: true,
+  scripts: {
+    start: 'node backend/server.js',
+    'convert-data': 'node backend/convert-excel-to-json.js',
+    'postinstall': 'npm run convert-data'
+  },
+  dependencies: {
+    express: '^4.18.2',
+    'cors': '^2.8.5',
+    'dotenv': '^16.0.3',
+    'xlsx': '^0.18.5'
+  },
+  type: 'commonjs'
 };
 
 // Write the package.json to deploy directory
 fs.writeFileSync(
   path.join(config.deployDir, 'package.json'),
-  JSON.stringify(deployPackageJson, null, 2)
+  JSON.stringify(prodPackageJson, null, 2)
 );
 
 // Install production dependencies
