@@ -32,17 +32,38 @@ app.get('/', (req, res) => {
     });
 });
 
-// Simple static file serving in production
+// Serve static files from the dist directory in production
 if (process.env.NODE_ENV === 'production') {
     const distPath = path.join(__dirname, '../dist');
-    app.use(express.static(distPath));
     
-    // Handle SPA routing
-    app.get('*', (req, res) => {
+    // Serve static files with cache control
+    app.use(express.static(distPath, {
+        etag: true,
+        maxAge: '1y',
+        immutable: true
+    }));
+    
+    // Handle SPA routing - serve index.html for all non-API routes
+    app.get('*', (req, res, next) => {
+        // Skip API routes
         if (req.path.startsWith('/api/')) {
-            return res.status(404).json({ error: 'API endpoint not found' });
+            return next();
         }
-        res.sendFile(path.join(distPath, 'index.html'));
+        
+        // Serve index.html for all other routes
+        res.sendFile('index.html', {
+            root: distPath,
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        }, (err) => {
+            if (err) {
+                console.error('Error sending file:', err);
+                res.status(500).send('Error loading application');
+            }
+        });
     });
 }
 

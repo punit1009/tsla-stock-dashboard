@@ -128,8 +128,25 @@ function copyDir(src, dest) {
   }
 }
 
-// Copy the dist directory
-copyDir(config.distDir, path.join(config.deployDir, 'dist'));
+// Ensure the dist directory exists
+const distDeployDir = path.join(config.deployDir, 'dist');
+if (!fs.existsSync(distDeployDir)) {
+  fs.mkdirSync(distDeployDir, { recursive: true });
+}
+
+// Copy the dist directory contents
+console.log('Copying frontend build files...');
+const distFiles = fs.readdirSync(config.distDir);
+for (const file of distFiles) {
+  const srcPath = path.join(config.distDir, file);
+  const destPath = path.join(distDeployDir, file);
+  
+  if (fs.statSync(srcPath).isDirectory()) {
+    copyDir(srcPath, destPath);
+  } else {
+    fs.copyFileSync(srcPath, destPath);
+  }
+}
 
 // Ensure the backend directory exists in deploy
 const backendDeployDir = path.join(config.deployDir, 'backend');

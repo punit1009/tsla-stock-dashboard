@@ -3,7 +3,8 @@
  */
 
 // Get the API URL from environment variables with a fallback for production
-const API_URL = import.meta.env.VITE_GEMINI_API_URL || '/api';
+const API_URL = import.meta.env.VITE_GEMINI_API_URL || 
+  (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api');
 
 /**
  * Makes a request to the Gemini API through our backend proxy
