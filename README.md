@@ -2,6 +2,9 @@
 
 A dashboard for analyzing Tesla stock data with AI-powered insights using the Google Gemini API.
 
+![Screenshot 2025-05-26 163722](https://github.com/user-attachments/assets/9933c50c-aeb4-461a-8d2d-80aa2521221a)
+
+
 ## Features
 
 - Interactive stock price chart with customizable date ranges
